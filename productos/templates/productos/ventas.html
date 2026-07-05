@@ -1,5 +1,5 @@
 {% extends 'productos/base.html' %}
-{% load humanize %}
+{% load filtros %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
@@ -8,7 +8,7 @@
 {% block contenido %}
 <div class="row">
 
-    <!-- Columna izquierda: agregar productos -->
+    <!-- Agregar productos -->
     <div class="col-md-5">
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-dark text-white">
@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <!-- Columna derecha: carrito -->
+    <!-- Carrito -->
     <div class="col-md-7">
         <div class="card shadow-sm">
             <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
@@ -88,8 +88,8 @@
                             <tr>
                                 <td>{{ item.nombre }} {% if item.marca %}<small class="text-muted">{{ item.marca }}</small>{% endif %}</td>
                                 <td>{{ item.cantidad }}</td>
-                                <td>${{ item.precio|intcomma }}</td>
-                                <td>${{ item.subtotal|intcomma }}</td>
+                                <td>${{ item.precio|clp }}</td>
+                                <td>${{ item.subtotal|clp }}</td>
                                 <td>
                                     <a href="{% url 'eliminar_item_carrito' item.id %}" class="btn btn-danger btn-sm">
                                         <i class="bi bi-trash"></i>
@@ -101,7 +101,7 @@
                     </table>
                 </div>
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                    <h4 class="mb-0">Total: <span class="text-success">${{ total|intcomma }}</span></h4>
+                    <h4 class="mb-0">Total: <span class="text-success">${{ total|clp }}</span></h4>
                     <form method="POST" action="{% url 'confirmar_venta' %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success btn-lg">

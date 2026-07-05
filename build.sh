@@ -2,4 +2,3 @@
 pip install -r requirements.txt
 python manage.py migrate
 python crear_admin.py
-python poblar_datos.py

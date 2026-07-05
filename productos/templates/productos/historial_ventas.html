@@ -1,5 +1,5 @@
 {% extends 'productos/base.html' %}
-{% load humanize %}
+{% load filtros %}
 
 {% block contenido %}
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -25,7 +25,7 @@
             <tr>
                 <td>{{ venta.id }}</td>
                 <td>{{ venta.fecha|date:"d-m-Y H:i" }}</td>
-                <td>${{ venta.total|intcomma }}</td>
+                <td>${{ venta.total|clp }}</td>
                 <td>{{ venta.usuario }}</td>
                 <td>
                     <a href="{% url 'detalle_venta' venta.pk %}" class="btn btn-info btn-sm">

@@ -1,4 +1,5 @@
 {% extends 'productos/base.html' %}
+{% load filtros %}
 
 {% block contenido %}
 <div class="row justify-content-center">
@@ -12,6 +13,8 @@
                 <p class="fw-bold fs-5">{{ producto.nombre }} {% if producto.marca %}- {{ producto.marca }}{% endif %}</p>
                 <p class="text-muted mb-1">Stock actual:</p>
                 <p class="fw-bold fs-4 text-success">{{ producto.cantidad }} unidades</p>
+                <p class="text-muted mb-1">Precio:</p>
+                <p class="fw-bold">${{ producto.precio|clp }}</p>
                 <form method="POST">
                     {% csrf_token %}
                     <div class="mb-3">

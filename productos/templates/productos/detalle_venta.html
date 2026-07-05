@@ -1,5 +1,5 @@
 {% extends 'productos/base.html' %}
-{% load humanize %}
+{% load filtros %}
 
 {% block contenido %}
 <div class="row justify-content-center">
@@ -24,15 +24,15 @@
                         <tr>
                             <td>{{ detalle.producto.nombre }} {% if detalle.producto.marca %}<small class="text-muted">{{ detalle.producto.marca }}</small>{% endif %}</td>
                             <td>{{ detalle.cantidad }}</td>
-                            <td>${{ detalle.precio_unitario|intcomma }}</td>
-                            <td>${{ detalle.subtotal|intcomma }}</td>
+                            <td>${{ detalle.precio_unitario|clp }}</td>
+                            <td>${{ detalle.subtotal|clp }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                     <tfoot>
                         <tr class="table-dark">
                             <td colspan="3" class="text-end fw-bold">Total:</td>
-                            <td class="fw-bold">${{ venta.total|intcomma }}</td>
+                            <td class="fw-bold">${{ venta.total|clp }}</td>
                         </tr>
                     </tfoot>
                 </table>

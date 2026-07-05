@@ -1,5 +1,5 @@
 {% extends 'productos/base.html' %}
-{% load humanize %}
+{% load filtros %}
 
 {% block contenido %}
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -76,7 +76,7 @@
                     <span class="badge bg-danger ms-1">Stock bajo</span>
                     {% endif %}
                 </td>
-                <td>${{ producto.precio|intcomma }}</td>
+                <td>${{ producto.precio|clp }}</td>
                 <td>{{ producto.codigo|default:"-" }}</td>
                 <td>
                     <a href="{% url 'agregar_stock' producto.pk %}" class="btn btn-info btn-sm">
@@ -110,5 +110,4 @@ function abrirEscaner() {
     }
 }
 </script>
-
 {% endblock %}
