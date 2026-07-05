@@ -1,13 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Producto, Categoria
+from .models import Producto, Categoria, Venta, DetalleVenta
 from .forms import ProductoForm, CategoriaForm
 from django.db.models import Q, ExpressionWrapper, BooleanField, F
 import qrcode
 import io
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Producto, Categoria, Venta, DetalleVenta
 import json
 
 @login_required

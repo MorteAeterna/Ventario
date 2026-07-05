@@ -13,7 +13,7 @@ class Producto(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
     cantidad = models.PositiveBigIntegerField(default=0)
     precio = models.IntegerField(default=0)
-    codigo = models.CharField(max_length=50, blank=True, null=True)
+    codigo = models.CharField(max_length=50, blank=True, null=True, unique=True)
     stock_minimo = models.PositiveBigIntegerField(default=5)
 
     def __str__(self):
