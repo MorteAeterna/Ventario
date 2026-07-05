@@ -17,7 +17,7 @@
     </div>
 
     <!-- Vista de cámara -->
-    <div class="ratio ratio-1x1 mb-3 rounded overflow-hidden" style="max-width: 400px; margin: auto;">
+    <div id="contenedor-video" class="ratio ratio-1x1 mb-3 rounded overflow-hidden" style="max-width: 400px; margin: auto;">
         <video id="video" class="w-100"></video>
     </div>
 
@@ -60,8 +60,15 @@
                 <input type="text" name="marca" class="form-control">
             </div>
             <div class="mb-3">
-                <label class="form-label">Categoría</label>
-                <select name="categoria" class="form-select">
+                <div class="d-flex justify-content-between align-items-center">
+                    <label class="form-label mb-0">Categoría</label>
+                    <button type="button" class="btn btn-outline-light btn-sm"
+                            data-bs-toggle="modal" data-bs-target="#modalCategoria">
+                        + Nueva categoría
+                    </button>
+                </div>
+                <select name="categoria" id="select-categoria" class="form-select mt-1">
+                    <option value="">Sin categoría</option>
                     {% for cat in categorias %}
                     <option value="{{ cat.id }}">{{ cat.nombre }}</option>
                     {% endfor %}
@@ -86,6 +93,32 @@
     </div>
 </div>
 
+<!-- Modal nueva categoría -->
+<div class="modal fade" id="modalCategoria" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">Nueva categoría</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre de la categoría</label>
+                    <input type="text" id="nueva-categoria-nombre" class="form-control" placeholder="Ej: Bebidas">
+                </div>
+                <div id="categoria-mensaje"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="crearCategoria()">
+                    <i class="bi bi-check-circle"></i> Crear
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const codeReader = new ZXing.BrowserMultiFormatReader();
     let codigoEscaneado = '';
@@ -115,11 +148,12 @@
                         <strong>${data.nombre} ${data.marca}</strong><br>
                         Stock actualizado a <strong>${data.cantidad_nueva}</strong> unidades.
                         <br><br>
-                        <button onclick="reiniciar()" class="btn btn-outline-light btn-sm">Escanear otro</button>
+                        <button onclick="reiniciar()" class="btn btn-outline-light btn-sm">🔄 Escanear otro</button>
                         <a href="/" class="btn btn-outline-light btn-sm ms-2">← Ir al inventario</a>
                     </div>`;
             } else {
                 document.getElementById('resultado').style.display = 'none';
+                document.getElementById('contenedor-video').style.display = 'none';
                 document.getElementById('nuevo-codigo').value = codigoEscaneado;
                 document.getElementById('form-nuevo').style.display = 'block';
             }
@@ -131,12 +165,53 @@
         document.getElementById('resultado').style.display = 'none';
         document.getElementById('form-nuevo').style.display = 'none';
         document.getElementById('mensaje').innerHTML = '';
+        document.getElementById('contenedor-video').style.display = 'block';
         codeReader.decodeFromVideoDevice(null, 'video', (result, err) => {
             if (result) {
                 codigoEscaneado = result.getText();
                 codeReader.reset();
                 document.getElementById('codigo-detectado').textContent = codigoEscaneado;
                 document.getElementById('resultado').style.display = 'block';
+            }
+        });
+    }
+
+    function crearCategoria() {
+        const nombre = document.getElementById('nueva-categoria-nombre').value.trim();
+        if (!nombre) {
+            document.getElementById('categoria-mensaje').innerHTML =
+                '<div class="alert alert-danger">Por favor escribe un nombre.</div>';
+            return;
+        }
+
+        fetch('/categorias/crear-ajax/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({nombre: nombre})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const select = document.getElementById('select-categoria');
+                const option = new Option(data.nombre, data.id, true, true);
+                select.appendChild(option);
+                select.value = data.id;
+
+                document.getElementById('categoria-mensaje').innerHTML =
+                    '<div class="alert alert-success">Categoría creada correctamente.</div>';
+
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCategoria'));
+                    modal.hide();
+                    document.getElementById('nueva-categoria-nombre').value = '';
+                    document.getElementById('categoria-mensaje').innerHTML = '';
+                }, 1000);
+            } else {
+                document.getElementById('categoria-mensaje').innerHTML =
+                    '<div class="alert alert-danger">Error al crear la categoría.</div>';
             }
         });
     }
